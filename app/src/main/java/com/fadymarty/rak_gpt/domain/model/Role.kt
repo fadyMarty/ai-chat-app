@@ -1,19 +1,19 @@
 package com.fadymarty.rak_gpt.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.fadymarty.rak_gpt.data.data_source.remote.dto.RoleDto
 
-@Serializable
 enum class Role {
-    @SerialName("user")
     USER,
-
-    @SerialName("system")
     SYSTEM,
-
-    @SerialName("assistant")
     ASSISTANT,
-
-    @SerialName("function")
     FUNCTION
+}
+
+fun Role.toRoleDto(): RoleDto {
+    return when (this) {
+        Role.USER -> RoleDto.USER
+        Role.SYSTEM -> RoleDto.SYSTEM
+        Role.ASSISTANT -> RoleDto.ASSISTANT
+        Role.FUNCTION -> RoleDto.FUNCTION
+    }
 }

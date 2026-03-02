@@ -75,4 +75,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.androidx.navigation.compose)
+    implementation("com.mikepenz:multiplatform-markdown-renderer-android:0.39.2")
+    implementation("com.mikepenz:multiplatform-markdown-renderer-m3-android:0.39.2")
+    implementation("com.mikepenz:multiplatform-markdown-renderer-code-android:0.39.2")
 }

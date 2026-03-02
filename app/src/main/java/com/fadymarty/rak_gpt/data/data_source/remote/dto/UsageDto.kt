@@ -1,6 +1,5 @@
 package com.fadymarty.rak_gpt.data.data_source.remote.dto
 
-import com.fadymarty.rak_gpt.domain.model.Usage
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,14 +12,5 @@ data class UsageDto(
     @SerialName("total_tokens")
     val totalTokens: Int,
     @SerialName("precached_prompt_tokens")
-    val precachedPromptTokens: Int
+    val precachedPromptTokens: Int,
 )
-
-fun UsageDto.toUsage(): Usage {
-    return Usage(
-        promptTokens = promptTokens,
-        completionTokens = completionTokens,
-        totalTokens = totalTokens,
-        precachedPromptTokens = precachedPromptTokens
-    )
-}
