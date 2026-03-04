@@ -1,5 +1,7 @@
 package com.fadymarty.rak_gpt.presentation.chat
 
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fadymarty.rak_gpt.domain.model.Message
@@ -20,22 +22,18 @@ class ChatViewModel(
 
     fun onEvent(event: ChatEvent) {
         when (event) {
-            is ChatEvent.MessageChanged -> {
-                _state.update {
-                    it.copy(
-                        message = event.message
-                    )
-                }
+            is ChatEvent.EditPrompt -> {
+                _state.value.promptState.setTextAndPlaceCursorAtEnd(event.prompt)
             }
 
-            ChatEvent.SendMessage -> onSendMessage()
+            is ChatEvent.SendMessage -> onSendMessage(event.prompt)
         }
     }
 
-    private fun onSendMessage() {
+    private fun onSendMessage(prompt: String?) {
         val userMessage = Message(
             role = Role.USER,
-            content = _state.value.message
+            content = prompt ?: _state.value.promptState.text.toString()
         )
         val assistantMessage = Message(
             role = Role.ASSISTANT,
@@ -43,22 +41,30 @@ class ChatViewModel(
         )
         _state.update {
             it.copy(
-                messages = it.messages + userMessage + assistantMessage,
-                message = ""
+                messages = it.messages.toMutableList().apply {
+                    add(0, userMessage)
+                    add(0, assistantMessage)
+                }
             )
         }
+        _state.value.promptState.clearText()
         chatRepository.sendMessage(
-            messages = _state.value.messages.dropLast(1)
+            messages = _state.value.messages.drop(1)
         ).onEach { result ->
             result
                 .onSuccess { content ->
                     _state.update {
-                        val messages = it.messages.toMutableList()
-                        val lastMessage = messages.last()
-                        messages[messages.lastIndex] = lastMessage.copy(
-                            content = lastMessage.content + content
+                        it.copy(
+                            messages = it.messages.toMutableList().apply {
+                                val firstMessage = it.messages.first()
+                                set(
+                                    index = 0,
+                                    element = firstMessage.copy(
+                                        content = firstMessage.content + content
+                                    )
+                                )
+                            }
                         )
-                        it.copy(messages = messages)
                     }
                 }
         }.launchIn(viewModelScope)

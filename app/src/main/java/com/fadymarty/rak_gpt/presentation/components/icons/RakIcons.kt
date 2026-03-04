@@ -1,4 +1,4 @@
-package com.fadymarty.rak_gpt.presentation.components
+package com.fadymarty.rak_gpt.presentation.components.icons
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,9 +51,9 @@ object RakIcons {
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_check_box_outline_blank)
 
-    val DragHandle: ImageVector
+    val Menu: ImageVector
         @Composable
-        get() = ImageVector.vectorResource(R.drawable.ic_drag_handle)
+        get() = ImageVector.vectorResource(R.drawable.ic_menu)
 
     val DataObject: ImageVector
         @Composable
@@ -70,6 +70,10 @@ object RakIcons {
     val Share: ImageVector
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_share)
+
+    val MoreVert: ImageVector
+        @Composable
+        get() = ImageVector.vectorResource(R.drawable.ic_more_vert)
 
     val Hourglass: ImageVector
         @Composable

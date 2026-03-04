@@ -1,4 +1,4 @@
-package com.fadymarty.rak_gpt.presentation.chat.components
+package com.fadymarty.rak_gpt.presentation.components.buttons
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.fadymarty.rak_gpt.common.theme.RakTheme
 
 @Composable
-fun RakIconButton(
+fun FilledIconButton(
     modifier: Modifier = Modifier,
     icon: ImageVector,
     onClick: () -> Unit,
