@@ -25,10 +25,10 @@ class OkHttpRemoteChatDataSource(
 
     override fun sendMessage(request: ChatRequestDto): Flow<MessageChunkDto> {
         return callbackFlow {
-            val body = json.encodeToString(request).toRequestBody()
+            val requestBody = json.encodeToString(request).toRequestBody()
             val sseRequest = Request.Builder()
                 .url("${Constants.BASE_URL}chat/completions")
-                .post(body)
+                .post(requestBody)
                 .build()
 
             val listener = object : EventSourceListener() {
@@ -59,7 +59,8 @@ class OkHttpRemoteChatDataSource(
                 }
             }
 
-            val eventSource = EventSources.createFactory(okHttpClient)
+            val eventSource = EventSources
+                .createFactory(okHttpClient)
                 .newEventSource(sseRequest, listener)
 
             awaitClose {

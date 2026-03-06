@@ -53,11 +53,11 @@ class GigaChatAuthenticator(
         val contentType = "application/json".toMediaType()
 
         val authApi = Retrofit.Builder()
-            .baseUrl(GigaChatApi.BASE_URL)
+            .baseUrl(GigaChatAuthApi.BASE_URL)
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(okHttpClient)
             .build()
-            .create(GigaChatApi::class.java)
+            .create(GigaChatAuthApi::class.java)
 
         return authApi.getAccessToken()
     }

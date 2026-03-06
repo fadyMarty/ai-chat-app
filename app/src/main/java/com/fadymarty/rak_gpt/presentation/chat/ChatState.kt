@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import com.fadymarty.rak_gpt.common.theme.RakPalette
 import com.fadymarty.rak_gpt.domain.model.Message
 import com.fadymarty.rak_gpt.domain.model.PromptSuggestion
+import java.io.File
 
 data class ChatState(
     val promptSuggestions: List<PromptSuggestion> = listOf(
@@ -24,6 +25,12 @@ data class ChatState(
             color = Color(0xFF0FA958)
         )
     ),
-    val promptState: TextFieldState = TextFieldState(),
+    val isLoading: Boolean = false,
+    val isRecording: Boolean = false,
+    val messageState: TextFieldState = TextFieldState(),
     val messages: List<Message> = emptyList(),
+    val audioFile: File? = null,
+    val amplitudes: List<Int> = emptyList(),
+    val recordingSeconds: Int = 0,
+    val playingMessageId: String? = null,
 )

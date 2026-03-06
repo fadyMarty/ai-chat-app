@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MessageDto(
     val role: RoleDto,
-    val content: String,
+    val content: String? = null,
+    val attachments: List<String>? = null,
 )

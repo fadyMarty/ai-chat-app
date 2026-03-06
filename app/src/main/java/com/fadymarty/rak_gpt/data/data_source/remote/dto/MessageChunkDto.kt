@@ -9,6 +9,6 @@ data class MessageChunkDto(
     val created: Long,
     val model: String,
     @SerialName("object")
-    val obj: String,
+    val objectX: String,
     val usage: UsageDto? = null,
 )

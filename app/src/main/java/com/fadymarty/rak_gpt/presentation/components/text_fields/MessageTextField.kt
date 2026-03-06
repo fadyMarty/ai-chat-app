@@ -1,8 +1,8 @@
 package com.fadymarty.rak_gpt.presentation.components.text_fields
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -25,10 +25,18 @@ import com.fadymarty.rak_gpt.common.theme.RakTheme
 fun MessageTextField(
     modifier: Modifier = Modifier,
     state: TextFieldState,
-    hint: String? = null,
+    hint: String,
 ) {
     BasicTextField(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .clip(RoundedCornerShape(40.dp))
+            .background(RakTheme.colorScheme.black1)
+            .padding(
+                horizontal = 20.dp,
+                vertical = 16.dp
+            ),
         state = state,
         cursorBrush = SolidColor(RakTheme.colorScheme.normal),
         textStyle = TextStyle(
@@ -42,27 +50,19 @@ fun MessageTextField(
             maxHeightInLines = 6
         ),
         decorator = { innerTextField ->
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(40.dp))
-                    .background(RakTheme.colorScheme.black1)
-                    .padding(20.dp)
-            ) {
-                if (state.text.isEmpty() && hint != null) {
-                    Text(
-                        text = hint,
-                        style = TextStyle(
-                            fontFamily = NeurialGrotesk,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 16.sp,
-                            lineHeight = 1.32.em,
-                            color = RakTheme.colorScheme.violet5
-                        )
+            if (state.text.isEmpty()) {
+                Text(
+                    text = hint,
+                    style = TextStyle(
+                        fontFamily = NeurialGrotesk,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        lineHeight = 1.32.em,
+                        color = RakTheme.colorScheme.violet5
                     )
-                }
-                innerTextField()
+                )
             }
+            innerTextField()
         }
     )
 }

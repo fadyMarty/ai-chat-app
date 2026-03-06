@@ -1,25 +1,23 @@
 package com.fadymarty.rak_gpt.data.data_source.remote
 
-import com.fadymarty.rak_gpt.BuildConfig
-import com.fadymarty.rak_gpt.data.data_source.remote.dto.TokenResponseDto
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.Header
-import retrofit2.http.Headers
+import com.fadymarty.rak_gpt.data.data_source.remote.dto.FileResponseDto
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.http.Multipart
 import retrofit2.http.POST
-import java.util.UUID
+import retrofit2.http.Part
 
 interface GigaChatApi {
 
-    @FormUrlEncoded
-    @Headers("Authorization: Basic ${BuildConfig.AUTHORIZATION_KEY}")
-    @POST("oauth")
-    suspend fun getAccessToken(
-        @Header("RqUID") requestUid: String = UUID.randomUUID().toString(),
-        @Field("scope") scope: String = "GIGACHAT_API_PERS",
-    ): TokenResponseDto
+    @Multipart
+    @POST("files")
+    suspend fun uploadFile(
+        @Part file: MultipartBody.Part,
+        @Part("purpose") purpose: RequestBody = "general".toRequestBody(),
+    ): FileResponseDto
 
     companion object {
-        const val BASE_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/"
+        const val BASE_URL = "https://gigachat.devices.sberbank.ru/api/v1/"
     }
 }

@@ -75,6 +75,10 @@ object RakIcons {
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_more_vert)
 
+    val ContentCopy: ImageVector
+        @Composable
+        get() = ImageVector.vectorResource(R.drawable.ic_content_copy)
+
     val Hourglass: ImageVector
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_hourglass)
