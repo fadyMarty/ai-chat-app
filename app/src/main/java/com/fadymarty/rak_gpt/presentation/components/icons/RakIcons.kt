@@ -95,6 +95,10 @@ object RakIcons {
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_play_arrow)
 
+    val Search: ImageVector
+        @Composable
+        get() = ImageVector.vectorResource(R.drawable.ic_search)
+
     val PageInfo: ImageVector
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_page_info)
@@ -102,6 +106,10 @@ object RakIcons {
     val Language: ImageVector
         @Composable
         get() = ImageVector.vectorResource(R.drawable.ic_language)
+
+    val keyboardArrowRight: ImageVector
+        @Composable
+        get() = ImageVector.vectorResource(R.drawable.ic_keyboard_arrow_right)
 
     val IosShare: ImageVector
         @Composable

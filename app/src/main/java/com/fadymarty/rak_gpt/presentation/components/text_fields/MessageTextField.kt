@@ -1,8 +1,6 @@
 package com.fadymarty.rak_gpt.presentation.components.text_fields
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -15,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -25,18 +24,13 @@ import com.fadymarty.rak_gpt.common.theme.RakTheme
 fun MessageTextField(
     modifier: Modifier = Modifier,
     state: TextFieldState,
-    hint: String,
+    hint: String? = null,
 ) {
     BasicTextField(
         modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
             .clip(RoundedCornerShape(40.dp))
             .background(RakTheme.colorScheme.black1)
-            .padding(
-                horizontal = 20.dp,
-                vertical = 16.dp
-            ),
+            .padding(20.dp),
         state = state,
         cursorBrush = SolidColor(RakTheme.colorScheme.normal),
         textStyle = TextStyle(
@@ -50,7 +44,7 @@ fun MessageTextField(
             maxHeightInLines = 6
         ),
         decorator = { innerTextField ->
-            if (state.text.isEmpty()) {
+            if (state.text.isEmpty() && hint != null) {
                 Text(
                     text = hint,
                     style = TextStyle(
@@ -59,7 +53,9 @@ fun MessageTextField(
                         fontSize = 16.sp,
                         lineHeight = 1.32.em,
                         color = RakTheme.colorScheme.violet5
-                    )
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             innerTextField()

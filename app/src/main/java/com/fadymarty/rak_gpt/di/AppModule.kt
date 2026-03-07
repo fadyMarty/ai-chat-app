@@ -2,10 +2,6 @@ package com.fadymarty.rak_gpt.di
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.okhttp.OkHttpDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import com.fadymarty.rak_gpt.common.util.Constants
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatAuthenticator
@@ -13,9 +9,11 @@ import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatInterceptor
 import com.fadymarty.rak_gpt.data.data_source.remote.OkHttpRemoteChatDataSource
 import com.fadymarty.rak_gpt.data.data_source.remote.RemoteChatDataSource
 import com.fadymarty.rak_gpt.data.manager.TokenManagerImpl
+import com.fadymarty.rak_gpt.data.repository.AndroidAudioPlayer
 import com.fadymarty.rak_gpt.data.repository.AndroidAudioRecorder
 import com.fadymarty.rak_gpt.data.repository.ChatRepositoryImpl
 import com.fadymarty.rak_gpt.domain.manager.TokenManager
+import com.fadymarty.rak_gpt.domain.repository.AudioPlayer
 import com.fadymarty.rak_gpt.domain.repository.AudioRecorder
 import com.fadymarty.rak_gpt.domain.repository.ChatRepository
 import com.fadymarty.rak_gpt.presentation.chat.ChatViewModel
@@ -32,7 +30,6 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
-@UnstableApi
 val appModule = module {
 
     single {
@@ -71,21 +68,12 @@ val appModule = module {
             .create(GigaChatApi::class.java)
     }
     singleOf(::OkHttpRemoteChatDataSource) { bind<RemoteChatDataSource>() }
-    single {
-        val dataSourceFactory = OkHttpDataSource.Factory(get<OkHttpClient>())
-
-        ExoPlayer.Builder(androidContext())
-            .setMediaSourceFactory(
-                DefaultMediaSourceFactory(dataSourceFactory)
-            )
-            .setSeekForwardIncrementMs(10000L)
-            .build()
-    }
     singleOf(::Amplituda)
 
     singleOf(::TokenManagerImpl) { bind<TokenManager>() }
     singleOf(::ChatRepositoryImpl) { bind<ChatRepository>() }
     singleOf(::AndroidAudioRecorder) { bind<AudioRecorder>() }
+    singleOf(::AndroidAudioPlayer) { bind<AudioPlayer>() }
 
     viewModelOf(::ChatViewModel)
 }

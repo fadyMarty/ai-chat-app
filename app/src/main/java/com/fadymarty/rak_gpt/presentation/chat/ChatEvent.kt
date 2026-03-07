@@ -10,5 +10,5 @@ sealed interface ChatEvent {
     data class StartRecording(val outputFile: File) : ChatEvent
     data object StopRecording : ChatEvent
     data class PlayPause(val message: Message) : ChatEvent
-    data object SeekForward : ChatEvent
+    data class SeekForward(val message: Message) : ChatEvent
 }

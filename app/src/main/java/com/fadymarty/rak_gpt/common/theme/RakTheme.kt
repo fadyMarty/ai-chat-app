@@ -28,8 +28,8 @@ fun RakTheme(
     ) {
         MaterialTheme(
             colorScheme = lightColorScheme(
-                background = colorScheme.black3,
-                onBackground = colorScheme.violet7,
+                surface = colorScheme.black3,
+                onSurface = colorScheme.violet7,
                 primary = colorScheme.normal,
                 onPrimary = colorScheme.black1
             ),

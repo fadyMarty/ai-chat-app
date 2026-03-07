@@ -74,8 +74,6 @@ dependencies {
     implementation(libs.okhttp.sse)
     implementation(libs.retrofit)
     implementation(libs.converter.kotlinx.serialization)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.datasource.okhttp)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.multiplatform.markdown.renderer.android)
     implementation(libs.multiplatform.markdown.renderer.m3.android)

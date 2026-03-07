@@ -8,7 +8,6 @@ data class Message(
     val role: Role,
     val content: String? = null,
     val attachments: List<String>? = null,
-    val fileUrl: String? = null,
     val amplitudes: List<Int> = emptyList(),
 )
 

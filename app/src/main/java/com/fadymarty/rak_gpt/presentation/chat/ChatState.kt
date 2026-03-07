@@ -26,11 +26,13 @@ data class ChatState(
         )
     ),
     val isLoading: Boolean = false,
-    val isRecording: Boolean = false,
     val messageState: TextFieldState = TextFieldState(),
     val messages: List<Message> = emptyList(),
+    val isRecording: Boolean = false,
     val audioFile: File? = null,
     val amplitudes: List<Int> = emptyList(),
     val recordingSeconds: Int = 0,
-    val playingMessageId: String? = null,
+    val isPlaying: Boolean = false,
+    val messageId: String? = null,
+    val searchState: TextFieldState = TextFieldState(),
 )

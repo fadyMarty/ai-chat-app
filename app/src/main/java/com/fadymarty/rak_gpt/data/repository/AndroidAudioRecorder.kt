@@ -25,8 +25,10 @@ class AndroidAudioRecorder(
             setOutputFormat(MediaRecorder.OutputFormat.OGG)
             setAudioEncoder(MediaRecorder.AudioEncoder.OPUS)
             setOutputFile(FileOutputStream(outputFile).fd)
+
             prepare()
             start()
+
             recorder = this
         }
     }

@@ -4,14 +4,11 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
-import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.domain.model.Message
 import com.fadymarty.rak_gpt.domain.model.Role
+import com.fadymarty.rak_gpt.domain.repository.AudioPlayer
 import com.fadymarty.rak_gpt.domain.repository.AudioRecorder
 import com.fadymarty.rak_gpt.domain.repository.ChatRepository
-import com.linc.amplituda.Amplituda
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +23,7 @@ import java.io.File
 class ChatViewModel(
     private val chatRepository: ChatRepository,
     private val audioRecorder: AudioRecorder,
-    val player: ExoPlayer,
-    val amplituda: Amplituda,
+    private val audioPlayer: AudioPlayer,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChatState())
@@ -58,8 +54,10 @@ class ChatViewModel(
 
             is ChatEvent.PlayPause -> onPlayPause(event.message)
 
-            ChatEvent.SeekForward -> {
-                player.seekForward()
+            is ChatEvent.SeekForward -> {
+                if (event.message.id == _state.value.messageId) {
+                    audioPlayer.seekForward()
+                }
             }
         }
     }
@@ -110,8 +108,6 @@ class ChatViewModel(
             it.copy(
                 isRecording = true,
                 audioFile = outputFile,
-                amplitudes = emptyList(),
-                recordingSeconds = 0
             )
         }
         audioRecorder.start(outputFile)
@@ -135,102 +131,107 @@ class ChatViewModel(
 
     private fun onStopRecording() {
         _state.update {
-            it.copy(isRecording = false)
-        }
-        recordingJob?.cancel()
-        audioRecorder.stop()
-        val userMessage = Message(
-            role = Role.USER,
-            attachments = listOf("96a73e92-6343-4e2f-b5ef-62fdba5805fd"),
-            fileUrl = "${GigaChatApi.BASE_URL}files/96a73e92-6343-4e2f-b5ef-62fdba5805fd/content"
-        )
-        val assistantMessage = Message(
-            role = Role.ASSISTANT,
-            content = ""
-        )
-        _state.update {
             it.copy(
-                isLoading = true,
-                audioFile = null,
-                messages = listOf(assistantMessage, userMessage) + it.messages
+                isRecording = false,
+                amplitudes = emptyList(),
+                recordingSeconds = 0
             )
         }
-//        _state.value.audioFile?.let { audioFile ->
-//            viewModelScope.launch {
-//                chatRepository.uploadFile(audioFile)
-//                    .onSuccess { fileResponse ->
-//                        val userMessage = Message(
-//                            role = Role.USER,
-//                            attachments = listOf(fileResponse.id),
-//                            fileUrl = "${GigaChatApi.BASE_URL}/files/${fileResponse.id}/content"
-//                        )
-//                        val assistantMessage = Message(
-//                            role = Role.ASSISTANT,
-//                            content = ""
-//                        )
-//                        _state.update {
-//                            it.copy(
-//                                isLoading = true,
-//                                audioFile = null,
-//                                messages = listOf(assistantMessage, userMessage) + it.messages
-//                            )
-//                        }
-//
-//                        streamingJob?.cancel()
-//                        streamingJob = chatRepository.sendMessage(
-//                            messages = _state.value.messages
-//                                .filter { it.id != assistantMessage.id }
-//                                .reversed()
-//                        ).onEach { result ->
-//                            result.onSuccess { content ->
-//                                _state.update {
-//                                    it.copy(
-//                                        messages = it.messages.map { message ->
-//                                            if (message.id == assistantMessage.id) {
-//                                                message.copy(
-//                                                    content = message.content + content
-//                                                )
-//                                            } else message
-//                                        }
-//                                    )
-//                                }
-//                            }
-//                        }.onCompletion {
-//                            _state.update {
-//                                it.copy(isLoading = false)
-//                            }
-//                        }.launchIn(viewModelScope)
-//                    }
-//            }
-//        }
+        audioRecorder.stop()
+        recordingJob?.cancel()
+
+        _state.value.audioFile?.let { audioFile ->
+            viewModelScope.launch {
+                chatRepository.uploadFile(audioFile)
+                    .onSuccess { fileResponse ->
+                        val amplitudes = audioPlayer.getAmplitudes(audioFile)
+                        val userMessage = Message(
+                            role = Role.USER,
+                            attachments = listOf(fileResponse.id),
+                            amplitudes = amplitudes
+                        )
+                        val assistantMessage = Message(
+                            role = Role.ASSISTANT,
+                            content = ""
+                        )
+                        _state.update {
+                            it.copy(
+                                isLoading = true,
+                                audioFile = null,
+                                messages = listOf(assistantMessage, userMessage) + it.messages
+                            )
+                        }
+
+                        streamingJob?.cancel()
+                        streamingJob = chatRepository.sendMessage(
+                            messages = _state.value.messages
+                                .filter { it.id != assistantMessage.id }
+                                .reversed()
+                        ).onEach { result ->
+                            result.onSuccess { content ->
+                                _state.update {
+                                    it.copy(
+                                        messages = it.messages.map { message ->
+                                            if (message.id == assistantMessage.id) {
+                                                message.copy(
+                                                    content = message.content + content
+                                                )
+                                            } else message
+                                        }
+                                    )
+                                }
+                            }
+                        }.onCompletion {
+                            _state.update {
+                                it.copy(isLoading = false)
+                            }
+                        }.launchIn(viewModelScope)
+                    }
+            }
+        }
     }
 
     private fun onPlayPause(message: Message) {
-        message.fileUrl?.let { fileUrl ->
-            if (message.id != _state.value.playingMessageId) {
-                val amplitudes = amplituda
-                    .processAudio(fileUrl)
-                    .get()
-                    .amplitudesAsList()
-                _state.update {
-                    it.copy(
-                        messages = it.messages.map { newMessage ->
-                            if (newMessage.id == message.id) {
-                                newMessage.copy(amplitudes = amplitudes)
-                            } else newMessage
-                        }
-                    )
+        message.attachments?.firstOrNull()?.let { fileId ->
+            when {
+                message.id != _state.value.messageId -> {
+                    _state.update {
+                        it.copy(
+                            isPlaying = true,
+                            messageId = message.id
+                        )
+                    }
+                    viewModelScope.launch {
+                        chatRepository.downloadFile(fileId)
+                            .onSuccess { file ->
+                                audioPlayer.playFile(
+                                    file = file,
+                                    onCompletion = {
+                                        _state.update {
+                                            it.copy(
+                                                isPlaying = false,
+                                                messageId = null
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                    }
                 }
 
-                player.setMediaItem(MediaItem.fromUri(fileUrl))
-                player.prepare()
-                player.play()
-
-                _state.update {
-                    it.copy(playingMessageId = message.id)
+                _state.value.isPlaying -> {
+                    _state.update {
+                        it.copy(isPlaying = false)
+                    }
+                    audioPlayer.pause()
                 }
-            } else {
-                player.pause()
+
+                else -> {
+                    _state.update {
+                        it.copy(isPlaying = true)
+                    }
+                    audioPlayer.resume()
+                }
             }
         }
     }

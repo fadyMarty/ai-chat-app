@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -34,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import com.fadymarty.rak_gpt.R
 import com.fadymarty.rak_gpt.common.theme.NeurialGrotesk
 import com.fadymarty.rak_gpt.domain.model.PromptSuggestion
-import com.fadymarty.rak_gpt.presentation.components.cards.PromptSuggestionCard
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -43,84 +43,89 @@ fun ChatOnboarding(
     suggestions: List<PromptSuggestion>,
     onGetAnswerClick: (PromptSuggestion) -> Unit,
     onEditPromptClick: (PromptSuggestion) -> Unit,
+    userScrollEnabled: Boolean,
 ) {
-    val listState = rememberLazyListState(
+    val lazyListState = rememberLazyListState(
         initialFirstVisibleItemIndex = 1
     )
 
-    Column(
-        modifier = modifier.fillMaxSize()
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(37.dp),
+        contentPadding = PaddingValues(vertical = 16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .padding(horizontal = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                modifier = Modifier.size(
-                    width = 75.13.dp,
-                    height = 91.dp
-                ),
-                imageVector = ImageVector.vectorResource(R.drawable.ic_robot),
-                contentDescription = null
-            )
+        item {
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(19.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
+                Icon(
+                    modifier = Modifier.size(
+                        width = 75.13.dp,
+                        height = 91.dp
+                    ),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_robot),
+                    contentDescription = null
+                )
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Hello, Boss!\nAm Ready For Help You",
-                    fontFamily = NeurialGrotesk,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
-                    lineHeight = 1.32.em,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .alpha(0.76f),
-                    text = "Ask me anything what's are on your mind. Am here to assist you!",
-                    fontFamily = NeurialGrotesk,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 16.sp,
-                    lineHeight = 1.32.em,
-                    textAlign = TextAlign.Center
-                )
+                    verticalArrangement = Arrangement.spacedBy(19.dp)
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Hello, Boss!\nAm Ready For Help You",
+                        fontFamily = NeurialGrotesk,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp,
+                        lineHeight = 1.32.em,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(0.76f),
+                        text = "Ask me anything what's are on your mind. Am here to assist you!",
+                        fontFamily = NeurialGrotesk,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        lineHeight = 1.32.em,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
-        AnimatedVisibility(
-            modifier = Modifier.fillMaxWidth(),
-            visible = !WindowInsets.isImeVisible,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth()
+        item {
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxWidth(),
+                visible = !WindowInsets.isImeVisible,
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                Spacer(Modifier.height(37.dp))
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = listState,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(
-                        horizontal = 60.dp
-                    )
+                Column(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(suggestions) { suggestion ->
-                        PromptSuggestionCard(
-                            suggestion = suggestion,
-                            onGetAnswerClick = {
-                                onGetAnswerClick(suggestion)
-                            },
-                            onEditClick = {
-                                onEditPromptClick(suggestion)
-                            }
-                        )
+                    Spacer(Modifier.height(37.dp))
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = lazyListState,
+                        userScrollEnabled = userScrollEnabled,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(horizontal = 60.dp)
+                    ) {
+                        items(suggestions) { suggestion ->
+                            PromptSuggestion(
+                                suggestion = suggestion,
+                                onGetAnswerClick = {
+                                    onGetAnswerClick(suggestion)
+                                },
+                                onEditClick = {
+                                    onEditPromptClick(suggestion)
+                                }
+                            )
+                        }
                     }
                 }
             }

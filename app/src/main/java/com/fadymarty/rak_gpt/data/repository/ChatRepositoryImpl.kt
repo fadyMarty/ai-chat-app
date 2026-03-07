@@ -1,5 +1,6 @@
 package com.fadymarty.rak_gpt.data.repository
 
+import android.content.Context
 import com.fadymarty.rak_gpt.common.util.safeCall
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.data.data_source.remote.RemoteChatDataSource
@@ -15,8 +16,10 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.io.FileOutputStream
 
 class ChatRepositoryImpl(
+    private val context: Context,
     private val remoteChatDataSource: RemoteChatDataSource,
     private val gigaChatApi: GigaChatApi,
 ) : ChatRepository {
@@ -49,6 +52,19 @@ class ChatRepositoryImpl(
                     file.asRequestBody(contentType)
                 )
             ).toFileUploadResponse()
+        }
+    }
+
+    override suspend fun downloadFile(id: String): Result<File> {
+        return safeCall {
+            val responseBody = gigaChatApi.downloadFile(id)
+            val outputFile = File(context.cacheDir, "file.ogg")
+            responseBody.byteStream().use { inputStream ->
+                FileOutputStream(outputFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            outputFile
         }
     }
 }

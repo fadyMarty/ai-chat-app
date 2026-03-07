@@ -8,4 +8,5 @@ import java.io.File
 interface ChatRepository {
     fun sendMessage(messages: List<Message>): Flow<Result<String>>
     suspend fun uploadFile(file: File): Result<FileResponse>
+    suspend fun downloadFile(id: String): Result<File>
 }
