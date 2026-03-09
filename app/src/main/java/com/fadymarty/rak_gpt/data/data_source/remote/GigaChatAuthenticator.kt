@@ -17,7 +17,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.io.IOException
 
 class GigaChatAuthenticator(
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {

@@ -15,13 +15,10 @@ import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
 
-class OkHttpRemoteChatDataSource(
+class ChatDataSourceImpl(
     private val okHttpClient: OkHttpClient,
-) : RemoteChatDataSource {
-
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
+    private val json: Json,
+) : ChatDataSource {
 
     override fun sendMessage(request: ChatRequestDto): Flow<MessageChunkDto> {
         return callbackFlow {
@@ -38,6 +35,7 @@ class OkHttpRemoteChatDataSource(
                     type: String?,
                     data: String,
                 ) {
+                    super.onEvent(eventSource, id, type, data)
                     if (data == "[DONE]") {
                         close()
                         return
@@ -51,10 +49,12 @@ class OkHttpRemoteChatDataSource(
                     t: Throwable?,
                     response: Response?,
                 ) {
+                    super.onFailure(eventSource, t, response)
                     close(t)
                 }
 
                 override fun onClosed(eventSource: EventSource) {
+                    super.onClosed(eventSource)
                     close()
                 }
             }

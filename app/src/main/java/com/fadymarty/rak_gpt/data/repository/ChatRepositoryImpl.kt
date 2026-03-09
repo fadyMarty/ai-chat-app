@@ -2,8 +2,8 @@ package com.fadymarty.rak_gpt.data.repository
 
 import android.content.Context
 import com.fadymarty.rak_gpt.common.util.safeCall
+import com.fadymarty.rak_gpt.data.data_source.remote.ChatDataSource
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
-import com.fadymarty.rak_gpt.data.data_source.remote.RemoteChatDataSource
 import com.fadymarty.rak_gpt.data.data_source.remote.dto.request.ChatRequestDto
 import com.fadymarty.rak_gpt.domain.model.FileResponse
 import com.fadymarty.rak_gpt.domain.model.Message
@@ -20,7 +20,7 @@ import java.io.FileOutputStream
 
 class ChatRepositoryImpl(
     private val context: Context,
-    private val remoteChatDataSource: RemoteChatDataSource,
+    private val chatDataSource: ChatDataSource,
     private val gigaChatApi: GigaChatApi,
 ) : ChatRepository {
 
@@ -31,7 +31,7 @@ class ChatRepositoryImpl(
             stream = true
         )
 
-        return remoteChatDataSource.sendMessage(request)
+        return chatDataSource.sendMessage(request)
             .map { chunk ->
                 val content = chunk.choices.first().delta.content
                 Result.success(content)

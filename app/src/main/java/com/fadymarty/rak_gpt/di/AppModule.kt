@@ -3,11 +3,11 @@ package com.fadymarty.rak_gpt.di
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.fadymarty.rak_gpt.common.util.Constants
+import com.fadymarty.rak_gpt.data.data_source.remote.ChatDataSource
+import com.fadymarty.rak_gpt.data.data_source.remote.ChatDataSourceImpl
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatAuthenticator
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatInterceptor
-import com.fadymarty.rak_gpt.data.data_source.remote.OkHttpRemoteChatDataSource
-import com.fadymarty.rak_gpt.data.data_source.remote.RemoteChatDataSource
 import com.fadymarty.rak_gpt.data.manager.TokenManagerImpl
 import com.fadymarty.rak_gpt.data.repository.AndroidAudioPlayer
 import com.fadymarty.rak_gpt.data.repository.AndroidAudioRecorder
@@ -42,6 +42,10 @@ val appModule = module {
         )
     }
 
+    single {
+        Json { ignoreUnknownKeys = true }
+    }
+
     singleOf(::GigaChatInterceptor)
     singleOf(::GigaChatAuthenticator)
     single {
@@ -54,6 +58,7 @@ val appModule = module {
             .authenticator(get<GigaChatAuthenticator>())
             .build()
     }
+
     single {
         val json = Json {
             ignoreUnknownKeys = true
@@ -67,7 +72,8 @@ val appModule = module {
             .build()
             .create(GigaChatApi::class.java)
     }
-    singleOf(::OkHttpRemoteChatDataSource) { bind<RemoteChatDataSource>() }
+    singleOf(::ChatDataSourceImpl) { bind<ChatDataSource>() }
+
     singleOf(::Amplituda)
 
     singleOf(::TokenManagerImpl) { bind<TokenManager>() }
