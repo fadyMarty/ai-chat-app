@@ -8,12 +8,12 @@ suspend fun <T> safeCall(
 ): Result<T> {
     try {
         val response = execute()
-        return Result.success(response)
+        return Result.Success(response)
     } catch (e: HttpException) {
         e.printStackTrace()
-        return Result.failure(e)
+        return Result.Failure(e)
     } catch (e: IOException) {
         e.printStackTrace()
-        return Result.failure(e)
+        return Result.Failure(e)
     }
 }

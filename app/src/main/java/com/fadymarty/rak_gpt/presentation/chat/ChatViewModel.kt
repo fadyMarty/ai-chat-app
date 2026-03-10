@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fadymarty.rak_gpt.domain.model.Message
 import com.fadymarty.rak_gpt.domain.model.Role
+import com.fadymarty.rak_gpt.common.util.onSuccess
 import com.fadymarty.rak_gpt.domain.repository.AudioPlayer
 import com.fadymarty.rak_gpt.domain.repository.AudioRecorder
 import com.fadymarty.rak_gpt.domain.repository.ChatRepository
@@ -168,13 +169,13 @@ class ChatViewModel(
                                 .filter { it.id != assistantMessage.id }
                                 .reversed()
                         ).onEach { result ->
-                            result.onSuccess { content ->
+                            result.onSuccess { chunk ->
                                 _state.update {
                                     it.copy(
                                         messages = it.messages.map { message ->
                                             if (message.id == assistantMessage.id) {
                                                 message.copy(
-                                                    content = message.content + content
+                                                    content = message.content + chunk
                                                 )
                                             } else message
                                         }

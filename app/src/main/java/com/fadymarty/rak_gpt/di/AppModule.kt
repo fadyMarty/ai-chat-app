@@ -3,8 +3,8 @@ package com.fadymarty.rak_gpt.di
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.fadymarty.rak_gpt.common.util.Constants
-import com.fadymarty.rak_gpt.data.data_source.remote.ChatDataSource
-import com.fadymarty.rak_gpt.data.data_source.remote.ChatDataSourceImpl
+import com.fadymarty.rak_gpt.data.data_source.remote.ChatRemoteDataSource
+import com.fadymarty.rak_gpt.data.data_source.remote.ChatRemoteDataSourceImpl
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatAuthenticator
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatInterceptor
@@ -72,7 +72,7 @@ val appModule = module {
             .build()
             .create(GigaChatApi::class.java)
     }
-    singleOf(::ChatDataSourceImpl) { bind<ChatDataSource>() }
+    singleOf(::ChatRemoteDataSourceImpl) { bind<ChatRemoteDataSource>() }
 
     singleOf(::Amplituda)
 

@@ -2,16 +2,15 @@ package com.fadymarty.rak_gpt.data.repository
 
 import android.content.Context
 import com.fadymarty.rak_gpt.common.util.safeCall
-import com.fadymarty.rak_gpt.data.data_source.remote.ChatDataSource
+import com.fadymarty.rak_gpt.data.data_source.remote.ChatRemoteDataSource
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.data.data_source.remote.dto.request.ChatRequestDto
 import com.fadymarty.rak_gpt.domain.model.FileResponse
 import com.fadymarty.rak_gpt.domain.model.Message
+import com.fadymarty.rak_gpt.common.util.Result
 import com.fadymarty.rak_gpt.domain.model.toMessageDto
 import com.fadymarty.rak_gpt.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -20,7 +19,7 @@ import java.io.FileOutputStream
 
 class ChatRepositoryImpl(
     private val context: Context,
-    private val chatDataSource: ChatDataSource,
+    private val chatRemoteDataSource: ChatRemoteDataSource,
     private val gigaChatApi: GigaChatApi,
 ) : ChatRepository {
 
@@ -31,14 +30,7 @@ class ChatRepositoryImpl(
             stream = true
         )
 
-        return chatDataSource.sendMessage(request)
-            .map { chunk ->
-                val content = chunk.choices.first().delta.content
-                Result.success(content)
-            }
-            .catch { e ->
-                emit(Result.failure(e))
-            }
+        return chatRemoteDataSource.sendMessage(request)
     }
 
     override suspend fun uploadFile(file: File): Result<FileResponse> {

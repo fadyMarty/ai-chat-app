@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -290,7 +291,11 @@ private fun MessageBar(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AudioWaveform(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .graphicsLayer {
+                                scaleY = 20.dp / 48.dp
+                            },
                         amplitudes = state.amplitudes,
                         onProgressChange = {},
                         waveformBrush = Brush.linearGradient(
