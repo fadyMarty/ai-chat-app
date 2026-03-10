@@ -4,9 +4,9 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.fadymarty.rak_gpt.common.util.onSuccess
 import com.fadymarty.rak_gpt.domain.model.Message
 import com.fadymarty.rak_gpt.domain.model.Role
-import com.fadymarty.rak_gpt.common.util.onSuccess
 import com.fadymarty.rak_gpt.domain.repository.AudioPlayer
 import com.fadymarty.rak_gpt.domain.repository.AudioRecorder
 import com.fadymarty.rak_gpt.domain.repository.ChatRepository

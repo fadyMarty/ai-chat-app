@@ -1,8 +1,8 @@
 package com.fadymarty.rak_gpt.domain.repository
 
+import com.fadymarty.rak_gpt.common.util.Result
 import com.fadymarty.rak_gpt.domain.model.FileResponse
 import com.fadymarty.rak_gpt.domain.model.Message
-import com.fadymarty.rak_gpt.common.util.Result
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 

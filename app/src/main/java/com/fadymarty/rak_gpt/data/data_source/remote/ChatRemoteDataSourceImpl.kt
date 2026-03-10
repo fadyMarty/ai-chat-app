@@ -1,9 +1,9 @@
 package com.fadymarty.rak_gpt.data.data_source.remote
 
 import com.fadymarty.rak_gpt.common.util.Constants
+import com.fadymarty.rak_gpt.common.util.Result
 import com.fadymarty.rak_gpt.data.data_source.remote.dto.MessageChunkDto
 import com.fadymarty.rak_gpt.data.data_source.remote.dto.request.ChatRequestDto
-import com.fadymarty.rak_gpt.common.util.Result
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -21,7 +21,7 @@ class ChatRemoteDataSourceImpl(
     private val json: Json,
 ) : ChatRemoteDataSource {
 
-    override fun sendMessage(request: ChatRequestDto): Flow<Result<String>> {
+    override fun sendMessage(request: ChatRequestDto): Flow<Result<MessageChunkDto>> {
         return callbackFlow {
             val requestBody = json.encodeToString(request).toRequestBody()
             val sseRequest = Request.Builder()
@@ -42,8 +42,7 @@ class ChatRemoteDataSourceImpl(
                         return
                     }
                     val chunk = json.decodeFromString<MessageChunkDto>(data)
-                    val content = chunk.choices.first().delta.content
-                    trySend(Result.Success(content))
+                    trySend(Result.Success(chunk))
                 }
 
                 override fun onFailure(

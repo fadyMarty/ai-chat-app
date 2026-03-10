@@ -1,16 +1,18 @@
 package com.fadymarty.rak_gpt.data.repository
 
 import android.content.Context
+import com.fadymarty.rak_gpt.common.util.Result
+import com.fadymarty.rak_gpt.common.util.map
 import com.fadymarty.rak_gpt.common.util.safeCall
 import com.fadymarty.rak_gpt.data.data_source.remote.ChatRemoteDataSource
 import com.fadymarty.rak_gpt.data.data_source.remote.GigaChatApi
 import com.fadymarty.rak_gpt.data.data_source.remote.dto.request.ChatRequestDto
 import com.fadymarty.rak_gpt.domain.model.FileResponse
 import com.fadymarty.rak_gpt.domain.model.Message
-import com.fadymarty.rak_gpt.common.util.Result
 import com.fadymarty.rak_gpt.domain.model.toMessageDto
 import com.fadymarty.rak_gpt.domain.repository.ChatRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -31,6 +33,11 @@ class ChatRepositoryImpl(
         )
 
         return chatRemoteDataSource.sendMessage(request)
+            .map { result ->
+                result.map { chunk ->
+                    chunk.choices.first().delta.content
+                }
+            }
     }
 
     override suspend fun uploadFile(file: File): Result<FileResponse> {
